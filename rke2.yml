@@ -1,0 +1,58 @@
+-
+  name: Setup RKE2 Master Nodes K8S
+  hosts: master
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  
+  tasks:
+    - name: Copy RKE2 Setup Master Nodes Script
+      copy:
+        src: '{{item}}'
+        dest: ~/
+        owner: root
+        mode: u+rwx,g-rwx,o-rwx
+      loop:
+        - ./setup-rke2-master.sh
+        - ./deploy-rancher.sh
+    - name: Running Script
+      shell: |
+        ./setup-rke2-master.sh
+    - name: Copy Master Nodes Token
+      fetch:
+        src: /var/lib/rancher/rke2/server/node-token
+        dest: ./tmp/master-token
+        flat: yes        
+-
+  name: Setup RKE2 Worker Nodes K8S
+  hosts: worker
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  
+  tasks:
+    - name: Copy RKE2 Setup Worker Nodes Script
+      copy:
+        src: '{{item}}'
+        dest: ~/
+        owner: root
+        mode: u+rwx,g-rwx,o-rwx
+      loop:
+        - ./setup-rke2-worker.sh
+        - ./tmp/master-ip
+        - ./tmp/master-token
+    - name: Running Script
+      shell: |
+        ./setup-rke2-worker.sh
+
+-
+  name: Setup Rancher
+  hosts: master
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  
+  tasks:
+    - name: Running Script
+      shell: |
+        ./deploy-rancher.sh      
