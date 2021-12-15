@@ -18,6 +18,11 @@
     - name: Running Script
       shell: |
         ./setup-rke2-master.sh
+      register: log_output
+    
+    - name: Print Output
+      debug: var=log_output.stdout_lines
+
     - name: Copy Master Nodes Token
       fetch:
         src: /var/lib/rancher/rke2/server/node-token
@@ -44,7 +49,9 @@
     - name: Running Script
       shell: |
         ./setup-rke2-worker.sh
-
+      register: log_output
+    - name: Print Output
+      debug: var=log_output.stdout_lines
 -
   name: Setup Rancher
   hosts: master
@@ -55,4 +62,7 @@
   tasks:
     - name: Running Script
       shell: |
-        ./deploy-rancher.sh      
+        ./deploy-rancher.sh     
+      register: log_output
+    - name: Print Output
+      debug: var=log_output.stdout_lines 

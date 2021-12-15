@@ -23,4 +23,4 @@ helm fetch rancher-stable/rancher --version=2.5.5
 kubectl create namespace cattle-system
 helm install rancher rancher-stable/rancher --version=v2.5.5 \
   --namespace cattle-system \
-  --set hostname=rke2.cluster.local
+  --set hostname=rke2.cluster
